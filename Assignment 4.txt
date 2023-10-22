@@ -1,0 +1,342 @@
+
+Assignment 4
+● What are:
+1 ANIMATIONCONTROLLER with example
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('AnimationController Example'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) {
+                  return Container(
+                    width: _animationController.value * 200,
+                    height: _animationController.value * 200,
+                    color: Colors.blue,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (_animationController.isAnimating) {
+              _animationController.stop();
+            } else {
+              _animationController.forward(from: 0.0);
+            }
+          },
+          child: Icon(Icons.play_arrow),
+        ),
+      ),
+    );
+  }
+}
+
+____________________________________________________________________________________
+
+2 Staggered Animations with example
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation1;
+  late Animation<double> _animation2;
+  late Animation<double> _animation3;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _animation1 = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0, 0.3),
+      ),
+    );
+
+    _animation2 = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.3, 0.6),
+      ),
+    );
+
+    _animation3 = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.6, 1),
+      ),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Staggered Animations Example'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _animation1.value,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      color: Colors.red,
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _animation2.value,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      color: Colors.green,
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _animation3.value,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      color: Colors.blue,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+____________________________________________________________________________________
+
+1+2
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  late Animation<double> _animation1;
+  late Animation<double> _animation2;
+  late Animation<double> _animation3;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    );
+
+    _animation = Tween<double>(begin: 0, end: 200).animate(_animationController);
+
+    _animation1 = Tween<double>(begin: 0, end: 200).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.0, 0.3),
+      ),
+    );
+
+    _animation2 = Tween<double>(begin: 0, end: 200).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.3, 0.6),
+      ),
+    );
+
+    _animation3 = Tween<double>(begin: 0, end: 200).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.6, 1.0),
+      ),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter Animations'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              AnimatedBuilder(
+                animation: _animation,
+                builder: (BuildContext context, Widget? child) {
+                  return Container(
+                    width: _animation.value,
+                    height: _animation.value,
+                    color: Colors.blue,
+                  );
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedBuilder(
+                animation: _animation1,
+                builder: (BuildContext context, Widget? child) {
+                  return Container(
+                    width: _animation1.value,
+                    height: 50,
+                    color: Colors.green,
+                  );
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedBuilder(
+                animation: _animation2,
+                builder: (BuildContext context, Widget? child) {
+                  return Container(
+                    width: _animation2.value,
+                    height: 50,
+                    color: Colors.red,
+                  );
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedBuilder(
+                animation: _animation3,
+                builder: (BuildContext context, Widget? child) {
+                  return Container(
+                    width: _animation3.value,
+                    height: 50,
+                    color: Colors.yellow,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+____________________________________________________________________________________
+
+3 Design and build your app with Interactive Screens
+
+
+تصميم وبناء التطبيق مع الشاشات التفاعلية ينطوي على إنشاء واجهة مستخدم (UI) تكون جاذبة بصريًا وسهلة الاستخدام ومتجاوبة مع إدخالات المستخدم. الشاشات التفاعلية تتيح للمستخدمين التفاعل مع عناصر مختلفة وأداء الإجراءات واستلام ردود فعل في الوقت الفعلي.
+
+
+1. تحديد هدف التطبيق: حدد بوضوح الهدف والأهداف الخاصة بتطبيقك. فهم الجمهور المستهدف واحتياجاتهم لتوجيه عملية التصميم.
+
+2. رسم السلك الأولي: أنشئ رسومات تخطيطية أولية لشاشات التطبيق على الورق أو باستخدام أدوات رقمية. يساعد هذا في تصور التخطيط والهيكل لكل شاشة وتدفق التنقل بينها.
+
+3. إنشاء نماذج لواجهة المستخدم: استخدم أدوات التصميم مثل Sketch أو Figma أو Adobe XD لإنشاء نماذج مفصلة لواجهة المستخدم. قم بتصميم العناصر البصرية مثل الأزرار والرموز والخطوط والألوان والصور. تأكد من استخدام لغة تصميم متسقة وجذابة بصريًا عبر الشاشات.
+
+4. التخطيط للتفاعلية: حدد العناصر التفاعلية والسلوكيات المرتبطة بكل شاشة. اعتبر تفاعلات المستخدم مثل النقر والسحب والسحب أو التصغير. حدد كيفية استجابة التطبيق لهذه التفاعلات، مثل تحريك العناصر أو عرض ردود الفعل أو التنقل إلى شاشات أخرى.
+
+5. تنفيذ واجهة المستخدم باستخدام إطار عمل: اختر إطار عمل مناسب مثل Flutter أو React Native أو SwiftUI لبناء التطبيق. استخدم نماذج التصميم كمرجع وحولها إلى رمز فعلي. قم بتنفيذ مكونات واجهة المستخدم التفاعلية والتعامل مع تفاعلات المستخدم باستخدام ميزات ومكتبات الإطار العمل.
+
+6. اختبار وتكرار: اختبر شاشات التطبيق التفاعلية بشكل منتظم للتأكد من أنها تعمل كما هو متوقع. اطلب ملاحظات من المستخدمين أو قم بإجراء اختبارات الاستخدام لتحديد المجالات التلتحسينها. قم بتكرار التصميم والوظائف بناءً على ملاحظات المستخدم ونتائج الاختبار.
+
+7. تضمين التغذية الراجعة والرسوم المتحركة: اعتبر إضافة آليات التغذية الراجعة مثل إشارات بصرية أو مؤشرات تقدم أو تلميحات لتوجيه المستخدمين عبر التطبيق. قم بتنفيذ رسوم متحركة سلسة وانتقالات بين الشاشات لتعزيز تجربة المستخدم وإنشاء شعور بالاستمرارية.
+
+8. تحسين الأداء: تأكد من أن شاشات التطبيق التفاعلية سريعة الاستجابة وتعمل بشكل جيد. قم بتحسين الرمز وتقليل الرسوم المتحركة غير الضرورية والتعامل بكفاءة مع تحميل البيانات لتوفير تجربة مستخدم سلسة.
+
+9. الاعتبارات المتعلقة بالوصولية: تأكد من أن شاشات التطبيق التفاعلية متاحة للمستخدمين ذوي الإعاقات. قم بتنفيذ ميزات مثل التوافق مع قارئ الشاشة والتباين المناسب للألوان ودعم التقنيات المساعدة.
+
+10. التحسين المستمر: راقب انخراط المستخدم والملاحظات بعد إطلاق التطبيق. اجمع بيانات تحليلية لفهم كيفية تفاعل المستخدمين مع شاشات التطبيق التفاعلية. استخدم هذه المعلومات لإجراء تحسينات قائمة على البيانات وتكرار التصميم والوظائف مع مرور الوقت.
+تطبيق مشوقة وسهلة الاستخدام
