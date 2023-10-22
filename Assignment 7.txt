@@ -1,0 +1,124 @@
+
+1-Explain with example how to use FutureBuilder.
+
+FlutureBuilder عبارة عن عنصر واجهة مستخدم يقوم بإرجاع عنصر واجهة مستخدم آخر استنادًا إلى أحدث لقطة للتفاعل مع المستقبل. يتم استخدامه في Flutter للتعامل مع العمليات غير المتزامنة حيث تحتاج واجهة المستخدم إلى التحديث وفقًا لنتيجة العملية.
+
+فيما يلي مثال لكيفية استخدام FutureBuilder:
+
+FutureBuilder<String>(
+  future: _fetchData(), // The Future you're working with
+  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      // While data is loading, show a loading spinner
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      // If there's an error, show an error message
+      return Text('Error: ${snapshot.error}');
+    } else {
+      // If data loaded successfully, show the data
+      return Text('Fetched Data: ${snapshot.data}');
+    }
+  },
+)
+
+
+
+في هذا المثال، _fetchData() هو دالة تعيد Future<String>. هذه الدالة قد تقوم بإجراء طلب شبكة أو قراءة من قاعدة بيانات. الدالة builder تأخذ وسيطتين: BuildContext و AsyncSnapshot. يوفر AsyncSnapshot معلومات حول حالة العملية المستقبلية، مثل ما إذا كانت لا تزال قيد التحميل، أو إذا حدث خطأ، أو إذا كانت البيانات جاهزة للاستخدام.
+
+تعيد الدالة builder واجهات مستخدم مختلفة بناءً على حالة العملية المستقبلية. إذا كانت البيانات لا تزال قيد التحميل (snapshot.connectionState == ConnectionState.waiting)، فإنه يعود بواجهة مستخدم تحتوي على مؤشر التحميل. إذا كان هناك خطأ (snapshot.hasError)، فإنه يعود بواجهة مستخدم تحتوي على نص يظهر رسالة الخطأ. إذا تم تحميل البيانات بنجاح، فإنه يعود بواجهة مستخدم تحتوي على نص يظهر البيانات المحصلة (snapshot.data).
+
+____________________________________
+2- Which permissions do you need to add while using local storage?
+
+
+
+لاستخدام التخزين المحلي في Flutter، kحتاج إلى إضافة الأذونات التالية إلى ملف AndroidManifest.xml:
+
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+<uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+<uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+
+يرجى ملاحظة أن هذه الأذونات ضرورية للوصول إلى وحدة التخزين الخارجية12. إذا كنت تستخدم وحدة التخزين الداخلية فقط (مثل التفضيلات المشتركة3)، فلن تحتاج إلى إضافة هذه الأذونات4. تأكد دائمًا من طلب الأذونات التي يحتاجها تطبيقك فقط
+
+__________________________
+3-In your project Apply shared preference and persist data ether with
+json file or local database .
+
+مثال لكيفية استخدام حزمة Shared_preferences في Flutter للاحتفاظ بالبيانات.
+
+
+اولا سنقوم ب‘ضافة الحزمة Shared_preferences إلى ملف pubspec.yaml
+
+
+ثم
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCounter();
+  }
+
+  _loadCounter() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _counter = (prefs.getInt('counter') ?? 0);
+    });
+  }
+
+  _incrementCounter() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _counter = (prefs.getInt('counter') ?? 0) + 1;
+    });
+    prefs.setInt('counter', _counter);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Shared Prefs Example'),
+      ),
+      body: Center(
+        child: Text(
+          'Button tapped $_counter time${_counter == 1 ? '' : 's'}.',
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+في هذا الكود، يتم استدعاء _loadCounter في initState لتحميل قيمة العداد من التفضيلات المشتركة عند بدء تشغيل التطبيق. _incrementCounter يزيد العداد ويحفظ القيمة الجديدة في التفضيلات المشتركة. يتم عرض العداد في منتصف الشاشة، ويوجد زر إجراء عائم يزيد العداد عند النقر عليه.
+

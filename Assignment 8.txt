@@ -1,0 +1,91 @@
+1- ● Compare between any two state management approaches
+بالطبع، دعنا نقارن بين نهجين شائعين لإدارة الحالة في Flutter: **Provider** و **BLoC**.
+
+**Provider**:
+- كما يوحي الاسم، Provider هو نهج في Flutter يوفر نموذج البيانات الحالي إلى المكان الذي نحتاجه فيه حاليا⁸.
+- يحتوي على بعض البيانات ويعلم المراقبين عند حدوث تغيير⁸.
+- لكي يكون الكائن من نوع ChangeNotifier متاحًا للواجهات الأخرى، نحتاج إلى ChangeNotifierProvider⁸.
+- الكائن الذي يستطيع استقبال البيانات الحالية هو Consumer، والذي يحتوي على كائن ChangeNotifier في معلمة دالة build التي يمكن استخدامها لإطعام الواجهات التالية بالبيانات⁸.
+- يُستخدم Provider غالبًا كبديل أكثر بساطة ومباشرة لـ Bloc[^10^].
+- تم بناء Provider على أساس InheritedWidget في Flutter ويستخدم نهجًا شجريًا لإدارة الحالة[^10^].
+
+**BLoC (Business Logic Components)**:
+- BLoC يوفر فصل طبقة العرض عن قواعد المنطق التجاري⁸.
+- BLoC هو المكان الذي تذهب إليه أحداث واجهة المستخدم. في هذه الطبقة، ونتيجة لتطبيق قواعد الأعمال على حدث معين، يستجيب BLoC بحالة معينة، التي تعود بعد ذلك إلى واجهة المستخدم⁸.
+- عندما تتلقى طبقة العرض حالة جديدة، فإنها تعيد بناء عرضها وفقًا لما تتطلبه الحالة الحالية⁸.
+- BLoC أكثر تشابهًا بكثير مع الحلول المشهورة في الموبايل مثل MVP أو MVVM⁹.
+
+في الختام، كلا من Provider و BLoC لديهم قوتهم الخاصة وهم مناسبون لحالات استخدام مختلفة. Provider أبسط وأكثر مباشرة، مما يجعله خيارًا جيدًا للتطبيقات الأصغر أو للمطورين الذين يبدأون للتو في إدارة الحالة. من ناحية أخرى، BLoC يقدم حلاً أكثر قوة مناسبًا للتطبيقات الأكبر ذات المنطق التجاري المعقد¹⁸⁹. اختيار بينهم غالبًا ما يعتمد على احتياجات مشروعك المحددة.
+.
+
+
+_____________________________________
+
+2-  Apply one of the state management approaches in your flutter project
+
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Counter(),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Provider Example'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'You have pushed the button this many times:',
+            ),
+            Text(
+              '${context.watch<Counter>().count}',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.read<Counter>().increment(),
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class Counter with ChangeNotifier {
+  int _count = 0;
+  int get count => _count;
+
+  void increment() {
+    _count++;
+    notifyListeners();
+  }
+}
+
+
+
+
+في هذا الكود، يتم استخدام ChangeNotifierProvider لتوفير مثيل لعداد عناصر واجهة المستخدم في الشجرة. تعمل فئة العداد على توسيع ChangeNotifier وتحتوي على منطق الأعمال لزيادة العداد. يستدعي التابع increment notifyListeners لإخطار أي عناصر واجهة مستخدم للاستماع بالتغييرات. تستخدم واجهة المستخدم context.watch<Counter>().count للاستماع إلى التغييرات وإعادة البناء عندما يتغير العدد، و context.read<Counter>().increment() لزيادة العداد عند الضغط على الزر
